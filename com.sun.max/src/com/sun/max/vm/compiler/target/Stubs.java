@@ -39,6 +39,7 @@ import com.oracle.max.asm.target.armv7.*;
 import com.oracle.max.asm.target.armv7.ARMV7Assembler.*;
 import com.oracle.max.asm.target.riscv64.RISCV64;
 import com.oracle.max.asm.target.riscv64.RISCV64Address;
+import com.oracle.max.asm.target.riscv64.RISCV64Assembler;
 import com.oracle.max.asm.target.riscv64.RISCV64MacroAssembler;
 import com.sun.cri.ci.*;
 import com.sun.max.annotate.*;
@@ -595,9 +596,8 @@ public class Stubs {
             int frameSize = target().alignFrameSize(csl.size);
             final int frameToCSA = csl.frameOffsetToCSA;
 
-            for (int i = 0; i < prologueSize; ++i) {
-                asm.nop();
-            }
+            asm.nop(prologueSize / RISCV64Assembler.INSTRUCTION_SIZE);
+
             asm.push(64, RISCV64.ra);
 
             // now allocate the frame for this method
@@ -771,6 +771,7 @@ public class Stubs {
             final int frameToCSA = csl.frameOffsetToCSA;
 
             asm.nop(prologueSize / Aarch64Assembler.INSTRUCTION_SIZE);
+
             asm.push(Aarch64.linkRegister);
             // now allocate the frame for this method
             asm.sub(64, Aarch64.sp, Aarch64.sp, frameSize);
@@ -825,9 +826,8 @@ public class Stubs {
             int frameSize = target().alignFrameSize(csl.size);
             final int frameToCSA = csl.frameOffsetToCSA;
 
-            for (int i = 0; i < prologueSize; ++i) {
-                asm.nop();
-            }
+            asm.nop(prologueSize / RISCV64Assembler.INSTRUCTION_SIZE);
+
             asm.push(64, RISCV64.ra);
             // now allocate the frame for this method
             asm.subi(RISCV64.sp, RISCV64.sp, frameSize);
@@ -1116,9 +1116,7 @@ public class Stubs {
             int frameSize = target().alignFrameSize(csl.size);
             int frameToCSA = csl.frameOffsetToCSA;
 
-            for (int i = 0; i < prologueSize; ++i) {
-                asm.nop();
-            }
+            asm.nop(prologueSize / RISCV64Assembler.INSTRUCTION_SIZE);
 
             // compute the static trampoline call site
             CiRegister callSite = registerConfig.getScratchRegister();
@@ -1774,9 +1772,7 @@ public class Stubs {
             Aarch64MacroAssembler asm = new Aarch64MacroAssembler(target(), registerConfig);
             int frameSize = platform().target.alignFrameSize(0);
 
-            for (int i = 0; i < prologueSize; ++i) {
-                asm.nop();
-            }
+            asm.nop(prologueSize / Aarch64Assembler.INSTRUCTION_SIZE);
 
             asm.mov(64, asm.scratchRegister, Aarch64.sp);
             asm.sub(64, asm.scratchRegister, asm.scratchRegister, Aarch64.r1);
@@ -1804,9 +1800,7 @@ public class Stubs {
             // TODO INFINITE LOOP
             asm.jal(RISCV64.zero, 0);
 
-            for (int i = 0; i < prologueSize; ++i) {
-                asm.nop();
-            }
+            asm.nop(prologueSize / RISCV64Assembler.INSTRUCTION_SIZE);
 
             asm.mov(asm.scratchRegister, RISCV64.sp);
             asm.sub(64, asm.scratchRegister, asm.scratchRegister, RISCV64.a2);
@@ -3002,9 +2996,7 @@ public class Stubs {
             masm.jal(RISCV64.zero, 0);
 
 
-            for (int i = 0; i < prologueSize; ++i) {
-                masm.nop();
-            }
+            masm.nop(prologueSize / RISCV64Assembler.INSTRUCTION_SIZE);
             masm.crashme();
 
             // now allocate the frame for this method
